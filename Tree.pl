@@ -79,12 +79,49 @@ gis(X,Y):-diff(Z,X),married(Y,Z),male(Y),female(Z),male(X).
 gis(X,Y):-diff(Z,W),married(X,Z),married(Y,W),male(Y),male(X),female(W),female(Z).
     
     
-    
-    
 true(t).    
+malePrint(X):- ( 
+    (
+      male(X) , 
+      write("(M)") ) 
+    ); 
+    (
+      female(X) , 
+      write("(F)")
+    ) .  
+printPep(X):-  
+  write(X) ,
+   malePrint(X) ,  
+   (
+    ( 
+      married(X,Wife) , 
+      write(" & " ) , 
+      write(Wife) , 
+      malePrint(Wife) 
+    ) ; 
+    (
+       not(married(X,Wife)) , 
+      write( "(Single) " ) 
+    ) 
+  ) .      
+printNode(X,Y):-
+  not( tabprint(Y)) , 
+  printPep(X) , 
+  write(":\n"),
+  findall(A,parent(X,A),ARR),
+  (recprintSons(ARR,Y); true(t)).
+recprintSons(X,Y):- 
+  not(X == [] ),
+  G is Y+1 , 
+  nth0(0,X,F) ,
+  printNode(F,G) , 
+  delete(X,F,XN) ,
+  recprintSons(XN,Y) .      
+tabprint(Y):- 
+  not(Y == 0 ) , 
+  G is Y-1 , 
+  write("\t."), 
+  tabprint(G) .    
     
-printNode(X,Y):-not( tabprint(Y)) , write(X) , write(":\n"),findall(A,parent(X,A),ARR)
-,(recprintSons(ARR,Y); true(t)).
-recprintSons(X,Y):- not(X == [] ),G is Y+1 , nth0(0,X,F) ,printNode(F,G) , delete(X,F,XN) 
-, recprintSons(XN,Y) .      
+     
 tabprint(Y):- not(Y == 0 ) , G is Y-1 , write("\t."), tabprint(G) .
